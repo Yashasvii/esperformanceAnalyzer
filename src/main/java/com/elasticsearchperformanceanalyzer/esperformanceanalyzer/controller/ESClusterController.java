@@ -21,9 +21,9 @@ public class ESClusterController {
     @Autowired
     ClusterService clusterService;
 
-    @GetMapping(path = PathConstants.CHECK_HEALTH)
-    public ResponseEntity<Object> checkHealth() {
-        return clusterService.checkHealth();
+    @GetMapping(path = PathConstants.CHECK_TEST_INDEX_COUNT)
+    public ResponseEntity<Object> checkTestIndexCount() {
+        return clusterService.checkTestIndexCount();
     }
 
     @GetMapping(path = "")

@@ -34,18 +34,32 @@ public class ElasticsearchConfig {
     @Bean
     public RestHighLevelClient elasticsearchClient() {
 
-        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
-
-        RestClientBuilder builder = RestClient.builder(new HttpHost(host, port, "http"))
-                .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider));
-
-        return new RestHighLevelClient(builder);
+        return new RestHighLevelClient(
+                RestClient.builder(
+                        HttpHost.create("https://search-es-test-hfvxnaeq6toidr6qahbh25ojje.ap-south-1.es.amazonaws.com")));
     }
 
     @Bean
     public String clusterInfo() {
-        return "http://"+ host + ":"+port;
+        return  "https://search-es-test-hfvxnaeq6toidr6qahbh25ojje.ap-south-1.es.amazonaws.com/";
     }
+
+
+//    @Bean
+//    public RestHighLevelClient elasticsearchClient() {
+//
+//        final CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+//        credentialsProvider.setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+//
+//        RestClientBuilder builder = RestClient.builder(new HttpHost(host, port, "http"))
+//                .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider));
+//
+//        return new RestHighLevelClient(builder);
+//    }
+//
+//    @Bean
+//    public String clusterInfo() {
+//        return "http://"+ host + ":"+port;
+//    }
 
 }

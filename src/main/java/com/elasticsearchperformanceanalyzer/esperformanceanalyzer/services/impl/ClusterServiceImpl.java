@@ -1,15 +1,15 @@
 package com.elasticsearchperformanceanalyzer.esperformanceanalyzer.services.impl;
 
 import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.services.ClusterService;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import org.elasticsearch.action.admin.cluster.health.ClusterHealthRequest;
+import lombok.extern.log4j.Log4j2;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.client.core.GetSourceRequest;
-import org.elasticsearch.cluster.ClusterInfo;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
  */
 
 @Service
+@Log4j2
 public class ClusterServiceImpl implements ClusterService {
 
     @Autowired
@@ -35,10 +36,24 @@ public class ClusterServiceImpl implements ClusterService {
     public int port;
 
     @Override
-    public ResponseEntity<Object> checkHealth() {
+    public ResponseEntity<Object> checkTestIndexCount() {
 
-        ClusterHealthRequest request = new ClusterHealthRequest();
-        return new ResponseEntity<>(request.getDescription(), HttpStatus.ACCEPTED);
+        try {
+            SearchRequest searchRequest = new SearchRequest("test1234");
+
+            SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
+            sourceBuilder.size(50);
+            searchRequest.source(sourceBuilder);
+
+            SearchResponse searchResponse = elasticsearchClient.search(searchRequest, RequestOptions.DEFAULT);
+            long totalCount = searchResponse.getHits().getTotalHits().value;
+            return new ResponseEntity<>(totalCount, HttpStatus.ACCEPTED);
+        }
+        catch (Exception e){
+             log.error(e);
+        }
+            return null;
+
     }
 
     @Override

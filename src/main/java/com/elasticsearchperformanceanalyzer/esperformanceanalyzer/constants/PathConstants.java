@@ -5,5 +5,5 @@ package com.elasticsearchperformanceanalyzer.esperformanceanalyzer.constants;
  */
 public class PathConstants {
     public static final String CLUSTERINFO ="clusterInfo";
-    public static final String CHECK_HEALTH ="checkHealth";
+    public static final String CHECK_TEST_INDEX_COUNT ="checkTestIndexCount";
 }
