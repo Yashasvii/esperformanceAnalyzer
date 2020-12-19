@@ -1,32 +1,22 @@
 package com.elasticsearchperformanceanalyzer.esperformanceanalyzer.testSample;
 
 
-import java.util.concurrent.TimeUnit;
-
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.elasticsearch.AWSElasticsearch;
 import com.amazonaws.services.elasticsearch.AWSElasticsearchClientBuilder;
-import com.amazonaws.services.elasticsearch.model.CreateElasticsearchDomainRequest;
-import com.amazonaws.services.elasticsearch.model.CreateElasticsearchDomainResult;
-import com.amazonaws.services.elasticsearch.model.DeleteElasticsearchDomainRequest;
-import com.amazonaws.services.elasticsearch.model.DeleteElasticsearchDomainResult;
-import com.amazonaws.services.elasticsearch.model.DescribeElasticsearchDomainRequest;
-import com.amazonaws.services.elasticsearch.model.DescribeElasticsearchDomainResult;
-import com.amazonaws.services.elasticsearch.model.EBSOptions;
-import com.amazonaws.services.elasticsearch.model.ElasticsearchClusterConfig;
-//import com.amazonaws.services.elasticsearch.model.NodeToNodeEncryptionOptions;
-import com.amazonaws.services.elasticsearch.model.ResourceNotFoundException;
-import com.amazonaws.services.elasticsearch.model.SnapshotOptions;
-import com.amazonaws.services.elasticsearch.model.UpdateElasticsearchDomainConfigRequest;
-import com.amazonaws.services.elasticsearch.model.UpdateElasticsearchDomainConfigResult;
-import com.amazonaws.services.elasticsearch.model.VolumeType;
+import com.amazonaws.services.elasticsearch.model.*;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Sample class demonstrating how to use the AWS SDK for Java to create, update,
  * and delete Amazon Elasticsearch Service domains.
  */
 
+/**
+ * @author yashasvi
+ */
 public class AESSample {
 
     public static void main(String[] args) {
@@ -45,9 +35,9 @@ public class AESSample {
                 .build();
 
         // Create a new domain, update its configuration, and delete it.
-        createDomain(client, domainName);
-        // waitForDomainProcessing(client, domainName);
-//        updateDomain(client, domainName);
+//        createDomain(client, domainName);
+        waitForDomainProcessing(client, domainName);
+        updateDomain(client, domainName);
         // waitForDomainProcessing(client, domainName);
 //        deleteDomain(client, domainName);
     }
@@ -58,11 +48,9 @@ public class AESSample {
      * and identity pool, whereas others require just an instance type or instance
      * count.
      *
-     * @param client
-     *            The AWSElasticsearch client to use for the requests to Amazon
-     *            Elasticsearch Service
-     * @param domainName
-     *            The name of the domain you want to create
+     * @param client     The AWSElasticsearch client to use for the requests to Amazon
+     *                   Elasticsearch Service
+     * @param domainName The name of the domain you want to create
      */
     private static void createDomain(final AWSElasticsearch client, final String domainName) {
 
@@ -83,9 +71,9 @@ public class AESSample {
                         .withEBSEnabled(true)
                         .withVolumeSize(10)
                         .withVolumeType(VolumeType.Gp2));
-                // You can uncomment this line and add your account ID, a user name, and the
-                // domain name to add an access policy.
-                // .withAccessPolicies("{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"arn:aws:iam::123456789012:user/user-name\"]},\"Action\":[\"es:*\"],\"Resource\":\"arn:aws:es:region:123456789012:domain/domain-name/*\"}]}")
+        // You can uncomment this line and add your account ID, a user name, and the
+        // domain name to add an access policy.
+        // .withAccessPolicies("{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":{\"AWS\":[\"arn:aws:iam::123456789012:user/user-name\"]},\"Action\":[\"es:*\"],\"Resource\":\"arn:aws:es:region:123456789012:domain/domain-name/*\"}]}")
 //                .withNodeToNodeEncryptionOptions(new NodeToNodeEncryptionOptions()
 //                        .withEnabled(true));
 
@@ -102,11 +90,9 @@ public class AESSample {
      * Amazon Cognito user pool and identity pool, whereas others require just an
      * instance type or instance count.
      *
-     * @param client
-     *            The AWSElasticsearch client to use for the requests to Amazon
-     *            Elasticsearch Service
-     * @param domainName
-     *            The name of the domain to update
+     * @param client     The AWSElasticsearch client to use for the requests to Amazon
+     *                   Elasticsearch Service
+     * @param domainName The name of the domain to update
      */
     private static void updateDomain(final AWSElasticsearch client, final String domainName) {
         try {
@@ -137,11 +123,9 @@ public class AESSample {
      * Deletes an Amazon Elasticsearch Service domain. Deleting a domain can take
      * several minutes.
      *
-     * @param client
-     *            The AWSElasticsearch client to use for the requests to Amazon
-     *            Elasticsearch Service
-     * @param domainName
-     *            The name of the domain that you want to delete
+     * @param client     The AWSElasticsearch client to use for the requests to Amazon
+     *                   Elasticsearch Service
+     * @param domainName The name of the domain that you want to delete
      */
     private static void deleteDomain(final AWSElasticsearch client, final String domainName) {
         try {
@@ -163,11 +147,9 @@ public class AESSample {
      * take a similar amount of time. This method checks every 15 seconds and finishes only when
      * the domain's processing status changes to false.
      *
-     * @param client
-     *            The AWSElasticsearch client to use for the requests to Amazon
-     *            Elasticsearch Service
-     * @param domainName
-     *            The name of the domain that you want to check
+     * @param client     The AWSElasticsearch client to use for the requests to Amazon
+     *                   Elasticsearch Service
+     * @param domainName The name of the domain that you want to check
      */
     private static void waitForDomainProcessing(final AWSElasticsearch client, final String domainName) {
         // Create a new request to check the domain status.

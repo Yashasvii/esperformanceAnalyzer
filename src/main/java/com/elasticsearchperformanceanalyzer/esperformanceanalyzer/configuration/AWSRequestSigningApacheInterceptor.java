@@ -37,6 +37,11 @@ import static org.apache.http.protocol.HttpCoreContext.HTTP_TARGET_HOST;
  * An {@link HttpRequestInterceptor} that signs requests using any AWS {@link Signer}
  * and {@link AWSCredentialsProvider}.
  */
+
+
+/**
+ * @author yashasvi
+ */
 public class AWSRequestSigningApacheInterceptor implements HttpRequestInterceptor {
     /**
      * The service that we're connecting to. Technically not necessary.
@@ -55,9 +60,8 @@ public class AWSRequestSigningApacheInterceptor implements HttpRequestIntercepto
     private final AWSCredentialsProvider awsCredentialsProvider;
 
     /**
-     *
-     * @param service service that we're connecting to
-     * @param signer particular signer implementation
+     * @param service                service that we're connecting to
+     * @param signer                 particular signer implementation
      * @param awsCredentialsProvider source of AWS credentials for signing
      */
     public AWSRequestSigningApacheInterceptor(final String service,
@@ -69,64 +73,6 @@ public class AWSRequestSigningApacheInterceptor implements HttpRequestIntercepto
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void process(final HttpRequest request, final HttpContext context)
-            throws HttpException, IOException {
-        URIBuilder uriBuilder;
-        try {
-            uriBuilder = new URIBuilder(request.getRequestLine().getUri());
-        } catch (URISyntaxException e) {
-            throw new IOException("Invalid URI" , e);
-        }
-
-        // Copy Apache HttpRequest to AWS DefaultRequest
-        DefaultRequest<?> signableRequest = new DefaultRequest<>(service);
-
-        HttpHost host = (HttpHost) context.getAttribute(HTTP_TARGET_HOST);
-        if (host != null) {
-            signableRequest.setEndpoint(URI.create(host.toURI()));
-        }
-        final HttpMethodName httpMethod =
-                HttpMethodName.fromValue(request.getRequestLine().getMethod());
-        signableRequest.setHttpMethod(httpMethod);
-        try {
-            signableRequest.setResourcePath(uriBuilder.build().getRawPath());
-        } catch (URISyntaxException e) {
-            throw new IOException("Invalid URI" , e);
-        }
-
-        if (request instanceof HttpEntityEnclosingRequest) {
-            HttpEntityEnclosingRequest httpEntityEnclosingRequest =
-                    (HttpEntityEnclosingRequest) request;
-            if (httpEntityEnclosingRequest.getEntity() == null) {
-                signableRequest.setContent(new ByteArrayInputStream(new byte[0]));
-            } else {
-                signableRequest.setContent(httpEntityEnclosingRequest.getEntity().getContent());
-            }
-        }
-        signableRequest.setParameters(nvpToMapParams(uriBuilder.getQueryParams()));
-        signableRequest.setHeaders(headerArrayToMap(request.getAllHeaders()));
-
-        // Sign it
-        signer.sign(signableRequest, awsCredentialsProvider.getCredentials());
-
-        // Now copy everything back
-        request.setHeaders(mapToHeaderArray(signableRequest.getHeaders()));
-        if (request instanceof HttpEntityEnclosingRequest) {
-            HttpEntityEnclosingRequest httpEntityEnclosingRequest =
-                    (HttpEntityEnclosingRequest) request;
-            if (httpEntityEnclosingRequest.getEntity() != null) {
-                BasicHttpEntity basicHttpEntity = new BasicHttpEntity();
-                basicHttpEntity.setContent(signableRequest.getContent());
-                httpEntityEnclosingRequest.setEntity(basicHttpEntity);
-            }
-        }
-    }
-
-    /**
-     *
      * @param params list of HTTP query params as NameValuePairs
      * @return a multimap of HTTP query params
      */
@@ -175,5 +121,62 @@ public class AWSRequestSigningApacheInterceptor implements HttpRequestIntercepto
             headers[i++] = new BasicHeader(headerEntry.getKey(), headerEntry.getValue());
         }
         return headers;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void process(final HttpRequest request, final HttpContext context)
+            throws HttpException, IOException {
+        URIBuilder uriBuilder;
+        try {
+            uriBuilder = new URIBuilder(request.getRequestLine().getUri());
+        } catch (URISyntaxException e) {
+            throw new IOException("Invalid URI", e);
+        }
+
+        // Copy Apache HttpRequest to AWS DefaultRequest
+        DefaultRequest<?> signableRequest = new DefaultRequest<>(service);
+
+        HttpHost host = (HttpHost) context.getAttribute(HTTP_TARGET_HOST);
+        if (host != null) {
+            signableRequest.setEndpoint(URI.create(host.toURI()));
+        }
+        final HttpMethodName httpMethod =
+                HttpMethodName.fromValue(request.getRequestLine().getMethod());
+        signableRequest.setHttpMethod(httpMethod);
+        try {
+            signableRequest.setResourcePath(uriBuilder.build().getRawPath());
+        } catch (URISyntaxException e) {
+            throw new IOException("Invalid URI", e);
+        }
+
+        if (request instanceof HttpEntityEnclosingRequest) {
+            HttpEntityEnclosingRequest httpEntityEnclosingRequest =
+                    (HttpEntityEnclosingRequest) request;
+            if (httpEntityEnclosingRequest.getEntity() == null) {
+                signableRequest.setContent(new ByteArrayInputStream(new byte[0]));
+            } else {
+                signableRequest.setContent(httpEntityEnclosingRequest.getEntity().getContent());
+            }
+        }
+        signableRequest.setParameters(nvpToMapParams(uriBuilder.getQueryParams()));
+        signableRequest.setHeaders(headerArrayToMap(request.getAllHeaders()));
+
+        // Sign it
+        signer.sign(signableRequest, awsCredentialsProvider.getCredentials());
+
+        // Now copy everything back
+        request.setHeaders(mapToHeaderArray(signableRequest.getHeaders()));
+        if (request instanceof HttpEntityEnclosingRequest) {
+            HttpEntityEnclosingRequest httpEntityEnclosingRequest =
+                    (HttpEntityEnclosingRequest) request;
+            if (httpEntityEnclosingRequest.getEntity() != null) {
+                BasicHttpEntity basicHttpEntity = new BasicHttpEntity();
+                basicHttpEntity.setContent(signableRequest.getContent());
+                httpEntityEnclosingRequest.setEntity(basicHttpEntity);
+            }
+        }
     }
 }

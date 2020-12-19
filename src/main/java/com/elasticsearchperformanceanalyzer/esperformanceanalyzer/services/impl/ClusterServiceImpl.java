@@ -6,10 +6,8 @@ import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
-import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,11 +40,10 @@ public class ClusterServiceImpl implements ClusterService {
             SearchResponse searchResponse = elasticsearchClient.search(searchRequest, RequestOptions.DEFAULT);
             long totalCount = searchResponse.getHits().getTotalHits().value;
             return new ResponseEntity<>(totalCount, HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            log.error(e);
         }
-        catch (Exception e){
-             log.error(e);
-        }
-            return null;
+        return null;
 
     }
 
@@ -56,6 +53,6 @@ public class ClusterServiceImpl implements ClusterService {
         RestTemplate restTemplate = new RestTemplate();
 
         ResponseEntity<Object> response = restTemplate.getForEntity(clusterInfo, Object.class);
-        return new ResponseEntity<>(response.getBody(),HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(response.getBody(), HttpStatus.ACCEPTED);
     }
 }

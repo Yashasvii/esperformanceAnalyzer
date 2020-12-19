@@ -3,13 +3,16 @@ package com.elasticsearchperformanceanalyzer.esperformanceanalyzer.request;
 
 import lombok.Data;
 
+/**
+ * @author yashasvi
+ */
 @Data
-public class ESCreationRequest {
+public class ESCreationUpdateDeleteRequest {
 
     String domainName;
-//    Integer masterCount;
+    //    Integer masterCount;
     String esVersion;
-//    Boolean dedicatedMasterEnabled;
+    //    Boolean dedicatedMasterEnabled;
     String instanceType;
     Integer instanceCount;
 

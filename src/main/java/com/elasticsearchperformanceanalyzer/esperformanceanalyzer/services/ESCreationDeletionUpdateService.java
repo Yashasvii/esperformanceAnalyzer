@@ -1,9 +1,18 @@
 package com.elasticsearchperformanceanalyzer.esperformanceanalyzer.services;
 
-import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.request.ESCreationRequest;
+import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.request.ESCreationUpdateDeleteRequest;
 import org.springframework.http.ResponseEntity;
 
+
+/**
+ * @author yashasvi
+ */
 public interface ESCreationDeletionUpdateService {
 
-    public ResponseEntity<Object> createElasticSearchCluster(ESCreationRequest esCreationRequest);
+    ResponseEntity<Object> createDomain(ESCreationUpdateDeleteRequest esCreationUpdateDeleteRequest);
+
+    ResponseEntity<Object> updateDomain(ESCreationUpdateDeleteRequest esCreationUpdateDeleteRequest);
+
+    ResponseEntity<Object> deleteDomain(ESCreationUpdateDeleteRequest esCreationUpdateDeleteRequest);
+
 }

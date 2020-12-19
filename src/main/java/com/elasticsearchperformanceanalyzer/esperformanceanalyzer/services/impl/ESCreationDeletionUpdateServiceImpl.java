@@ -5,67 +5,52 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.elasticsearch.AWSElasticsearch;
 import com.amazonaws.services.elasticsearch.AWSElasticsearchClientBuilder;
 import com.amazonaws.services.elasticsearch.model.*;
-import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.request.ESCreationRequest;
+import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.request.ESCreationUpdateDeleteRequest;
 import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.services.ESCreationDeletionUpdateService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author yashasvi
+ */
 
 @Service
 @Log4j2
 public class ESCreationDeletionUpdateServiceImpl implements ESCreationDeletionUpdateService {
-
-    @Override
-    public ResponseEntity<Object> createElasticSearchCluster(ESCreationRequest esCreationRequest) {
-
-
-        // Build the client using the default credentials chain.
-        // You can use the AWS CLI and run `aws configure` to set access key, secret
-        // key, and default region.
-        final AWSElasticsearch client = AWSElasticsearchClientBuilder
-                .standard()
-                // Unnecessary, but lets you use a region different than your default.
-                .withRegion(Regions.AP_SOUTH_1)
-                // Unnecessary, but if desired, you can use a different provider chain.
-                .withCredentials(new DefaultAWSCredentialsProviderChain())
-                .build();
-
-        // Create a new domain
-        String createdDomainResponse = createDomain(client, esCreationRequest);
-
-        return new ResponseEntity<>(createdDomainResponse, HttpStatus.ACCEPTED);
-
-
-    }
 
     /**
      * Creates an Amazon Elasticsearch Service domain with the specified options.
      * Some options require other AWS resources, such as an Amazon Cognito user pool
      * and identity pool, whereas others require just an instance type or instance
      * count.
-     *
-     * @param client
-     *            The AWSElasticsearch client to use for the requests to Amazon
+     * AWSElasticsearch client to use for the requests to Amazon
      *            Elasticsearch Service
-     * @param esCreationRequest
+     * @param esCreationUpdateDeleteRequest
      *            The name of the domain you want to create
      */
-    private static String createDomain(final AWSElasticsearch client, ESCreationRequest esCreationRequest) {
+
+
+    /**
+     * @author Yashasvi
+     */
+
+    @Override
+    public ResponseEntity<Object> createDomain(ESCreationUpdateDeleteRequest esCreationUpdateDeleteRequest) {
 
         // Create the request and set the desired configuration options
         CreateElasticsearchDomainRequest createRequest = new CreateElasticsearchDomainRequest()
-                .withDomainName((esCreationRequest.getDomainName() != null)? esCreationRequest.getDomainName(): "test-domain")
-                .withElasticsearchVersion((esCreationRequest.getEsVersion() != null)? esCreationRequest.getEsVersion(): "7.9")
+                .withDomainName((esCreationUpdateDeleteRequest.getDomainName() != null) ? esCreationUpdateDeleteRequest.getDomainName() : "test-domain")
+                .withElasticsearchVersion((esCreationUpdateDeleteRequest.getEsVersion() != null) ? esCreationUpdateDeleteRequest.getEsVersion() : "7.9")
                 .withElasticsearchClusterConfig(new ElasticsearchClusterConfig()
                         .withDedicatedMasterEnabled(false)
 //                        .withDedicatedMasterCount(3)
 //                        // Small, inexpensive instance types for testing. Not recommended for production
 //                        // domains.
 //                        .withDedicatedMasterType("t2.small.elasticsearch")
-                        .withInstanceType((esCreationRequest.getInstanceType() != null)? esCreationRequest.getInstanceType(): "t2.small.elasticsearch")
-                        .withInstanceCount((esCreationRequest.getInstanceType() != null)? esCreationRequest.getInstanceCount(): 5))
+                        .withInstanceType((esCreationUpdateDeleteRequest.getInstanceType() != null) ? esCreationUpdateDeleteRequest.getInstanceType() : "t2.small.elasticsearch")
+                        .withInstanceCount((esCreationUpdateDeleteRequest.getInstanceCount() != null) ? esCreationUpdateDeleteRequest.getInstanceCount() : 5))
                 // Many instance types require EBS storage.
                 .withEBSOptions(new EBSOptions()
                         .withEBSEnabled(true)
@@ -79,10 +64,85 @@ public class ESCreationDeletionUpdateServiceImpl implements ESCreationDeletionUp
 
         // Make the request.
         System.out.println("Sending domain creation request...");
-        CreateElasticsearchDomainResult createResponse = client.createElasticsearchDomain(createRequest);
+        CreateElasticsearchDomainResult createResponse = getClient().createElasticsearchDomain(createRequest);
         System.out.println("Domain creation response from Amazon Elasticsearch Service:");
         System.out.println(createResponse.getDomainStatus().toString());
-        return createResponse.getDomainStatus().toString();
+        return new ResponseEntity<>(createResponse.getDomainStatus().toString(), HttpStatus.ACCEPTED);
+    }
+
+
+    /**
+     * Updates the configuration of an Amazon Elasticsearch Service domain with the
+     * specified options. Some options require other AWS resources, such as an
+     * Amazon Cognito user pool and identity pool, whereas others require just an
+     * instance type or instance count.
+     */
+    @Override
+    public ResponseEntity<Object> updateDomain(ESCreationUpdateDeleteRequest esCreationUpdateDeleteRequest) {
+
+        try {
+            // Updates the domain to use three data instances instead of five.
+            // You can uncomment the Cognito lines and fill in the strings to enable Cognito
+            // authentication for Kibana.
+            final UpdateElasticsearchDomainConfigRequest updateRequest = new UpdateElasticsearchDomainConfigRequest()
+                    .withDomainName((esCreationUpdateDeleteRequest.getDomainName() != null) ? esCreationUpdateDeleteRequest.getDomainName() : "test-domain")
+                    // .withCognitoOptions(new CognitoOptions()
+                    // .withEnabled(true)
+                    // .withUserPoolId("user-pool-id")
+                    // .withIdentityPoolId("identity-pool-id")
+                    // .withRoleArn("role-arn"))
+                    .withElasticsearchClusterConfig(new ElasticsearchClusterConfig()
+                            .withInstanceCount((esCreationUpdateDeleteRequest.getInstanceCount() != null) ? esCreationUpdateDeleteRequest.getInstanceCount() : 5));
+
+            System.out.println("Sending domain update request...");
+            final UpdateElasticsearchDomainConfigResult updateResponse = getClient()
+                    .updateElasticsearchDomainConfig(updateRequest);
+            System.out.println("Domain update response from Amazon Elasticsearch Service:");
+            System.out.println(updateResponse.toString());
+            return new ResponseEntity<>(updateResponse.toString(), HttpStatus.ACCEPTED);
+        } catch (ResourceNotFoundException e) {
+            System.out.println("Domain not found. Please check the domain name.");
+            return new ResponseEntity<>("Domain not found. Please check the domain name.", HttpStatus.BAD_REQUEST);
+        }
+
+
+    }
+
+    /**
+     * Deletes an Amazon Elasticsearch Service domain. Deleting a domain can take
+     * several minutes.
+     */
+
+    @Override
+    public ResponseEntity<Object> deleteDomain(ESCreationUpdateDeleteRequest esCreationUpdateDeleteRequest) {
+        try {
+            final DeleteElasticsearchDomainRequest deleteRequest = new DeleteElasticsearchDomainRequest()
+                    .withDomainName((esCreationUpdateDeleteRequest.getDomainName() != null) ? esCreationUpdateDeleteRequest.getDomainName() : "test-domain");
+
+            System.out.println("Sending domain deletion request...");
+            final DeleteElasticsearchDomainResult deleteResponse = getClient().deleteElasticsearchDomain(deleteRequest);
+            System.out.println("Domain deletion response from Amazon Elasticsearch Service:");
+            System.out.println(deleteResponse.toString());
+            return new ResponseEntity<>(deleteResponse.toString(), HttpStatus.ACCEPTED);
+        } catch (ResourceNotFoundException e) {
+            System.out.println("Domain not found. Please check the domain name.");
+            return new ResponseEntity<>("Domain not found. Please check the domain name.", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
+    private AWSElasticsearch getClient() {
+
+        // Build the client using the default credentials chain.
+        // You can use the AWS CLI and run `aws configure` to set access key, secret
+        // key, and default region.
+        return AWSElasticsearchClientBuilder
+                .standard()
+                // Unnecessary, but lets you use a region different than your default.
+                .withRegion(Regions.AP_SOUTH_1)
+                // Unnecessary, but if desired, you can use a different provider chain.
+                .withCredentials(new DefaultAWSCredentialsProviderChain())
+                .build();
     }
 
 }
