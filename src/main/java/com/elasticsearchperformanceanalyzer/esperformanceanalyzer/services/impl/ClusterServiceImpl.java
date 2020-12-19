@@ -29,12 +29,6 @@ public class ClusterServiceImpl implements ClusterService {
     @Autowired
     String clusterInfo;
 
-    @Value("${elasticsearch.host}")
-    public String host;
-
-    @Value("${elasticsearch.port}")
-    public int port;
-
     @Override
     public ResponseEntity<Object> checkTestIndexCount() {
 
