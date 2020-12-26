@@ -34,7 +34,7 @@ public class ESInstanceCreationDeletionUpdateController {
         return esCreationDeletionUpdateService.deleteDomain(esCreationUpdateDeleteRequest);
     }
 
-    @GetMapping(path = PathConstants.GET_PROCESSING_STATUS)
+    @PostMapping(path = PathConstants.GET_PROCESSING_STATUS)
     public ResponseEntity<Object> getProcessingStatus(@RequestBody ESCreationUpdateDeleteRequest esCreationUpdateDeleteRequest) {
         return esCreationDeletionUpdateService.getProcessingStatus(esCreationUpdateDeleteRequest);
     }
