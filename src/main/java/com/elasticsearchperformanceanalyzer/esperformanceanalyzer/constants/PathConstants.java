@@ -10,7 +10,7 @@ public class PathConstants {
     public static final String CREATE_ELASTICSEARCH_CLUSTER ="createElasticsearchCluster";
     public static final String UPDATE_ELASTICSEARCH_CLUSTER ="updateElasticsearchCluster";
     public static final String DELETE_ELASTICSEARCH_CLUSTER ="deleteElasticsearchCluster";
-    public static final String GET_PROCESSING_STATUS ="getProcessing";
+    public static final String GET_PROCESSING_STATUS ="getProcessingStatus";
     public static final String SEARCH_QUERY ="searchQuery";
     public static final String SEARCH ="search";
 }
