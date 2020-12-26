@@ -6,10 +6,7 @@ import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.request.ESCrea
 import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.services.ESCreationDeletionUpdateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -36,6 +33,12 @@ public class ESInstanceCreationDeletionUpdateController {
     public ResponseEntity<Object> deleteElasticsearchCluster(@RequestBody ESCreationUpdateDeleteRequest esCreationUpdateDeleteRequest) {
         return esCreationDeletionUpdateService.deleteDomain(esCreationUpdateDeleteRequest);
     }
+
+    @GetMapping(path = PathConstants.GET_PROCESSING_STATUS)
+    public ResponseEntity<Object> getProcessingStatus(@RequestBody ESCreationUpdateDeleteRequest esCreationUpdateDeleteRequest) {
+        return esCreationDeletionUpdateService.getProcessingStatus(esCreationUpdateDeleteRequest);
+    }
+
 
 
 }

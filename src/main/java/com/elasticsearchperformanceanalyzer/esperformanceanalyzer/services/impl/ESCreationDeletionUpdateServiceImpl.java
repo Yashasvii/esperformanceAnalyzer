@@ -130,6 +130,15 @@ public class ESCreationDeletionUpdateServiceImpl implements ESCreationDeletionUp
         }
     }
 
+    @Override
+    public ResponseEntity<Object> getProcessingStatus(ESCreationUpdateDeleteRequest esCreationUpdateDeleteRequest) {
+        // Create a new request to check the domain status.
+        final DescribeElasticsearchDomainRequest describeRequest = new DescribeElasticsearchDomainRequest()
+                .withDomainName((esCreationUpdateDeleteRequest.getDomainName() != null) ? esCreationUpdateDeleteRequest.getDomainName() : "test-domain");
+
+        DescribeElasticsearchDomainResult describeResponse = getClient() .describeElasticsearchDomain(describeRequest);
+        return new ResponseEntity<>(describeResponse.toString(), HttpStatus.ACCEPTED);
+    }
 
     private AWSElasticsearch getClient() {
 

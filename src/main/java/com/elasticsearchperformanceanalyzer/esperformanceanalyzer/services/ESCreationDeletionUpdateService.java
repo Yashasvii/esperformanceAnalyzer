@@ -15,4 +15,5 @@ public interface ESCreationDeletionUpdateService {
 
     ResponseEntity<Object> deleteDomain(ESCreationUpdateDeleteRequest esCreationUpdateDeleteRequest);
 
+    ResponseEntity<Object> getProcessingStatus(ESCreationUpdateDeleteRequest esCreationUpdateDeleteRequest);
 }
