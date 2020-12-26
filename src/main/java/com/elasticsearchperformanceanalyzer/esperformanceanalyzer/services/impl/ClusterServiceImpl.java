@@ -36,6 +36,7 @@ public class ClusterServiceImpl implements ClusterService {
 
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
             sourceBuilder.size(0);
+            sourceBuilder.trackTotalHits(true);
             searchRequest.source(sourceBuilder);
 
             SearchResponse searchResponse = elasticsearchClient.search(searchRequest, RequestOptions.DEFAULT);
