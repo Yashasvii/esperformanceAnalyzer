@@ -1,7 +1,6 @@
 package com.elasticsearchperformanceanalyzer.esperformanceanalyzer.controller;
 
 import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.constants.PathConstants;
-import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.request.ESCreationUpdateDeleteRequest;
 import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.request.ESSearchRequest;
 import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.services.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,5 +1,6 @@
 package com.elasticsearchperformanceanalyzer.esperformanceanalyzer.services.impl;
 
+import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.request.IndexCountRequest;
 import com.elasticsearchperformanceanalyzer.esperformanceanalyzer.services.ClusterService;
 import lombok.extern.log4j.Log4j2;
 import org.elasticsearch.action.search.SearchRequest;
@@ -28,13 +29,13 @@ public class ClusterServiceImpl implements ClusterService {
     String clusterInfo;
 
     @Override
-    public ResponseEntity<Object> checkTestIndexCount() {
+    public ResponseEntity<Object> checkTestIndexCount(IndexCountRequest indexCountRequest) {
 
         try {
-            SearchRequest searchRequest = new SearchRequest("test1234");
+            SearchRequest searchRequest = new SearchRequest(indexCountRequest.getIndexName());
 
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
-            sourceBuilder.size(50);
+            sourceBuilder.size(0);
             searchRequest.source(sourceBuilder);
 
             SearchResponse searchResponse = elasticsearchClient.search(searchRequest, RequestOptions.DEFAULT);
