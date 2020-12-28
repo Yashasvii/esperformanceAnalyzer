@@ -9,6 +9,9 @@ import lombok.Data;
 @Data
 public class ESSearchRequest {
 
-    Integer times;
+    Integer totalTimes;
     String query;
+    Integer concurrencyTimes;
+    String indexName;
+
 }
