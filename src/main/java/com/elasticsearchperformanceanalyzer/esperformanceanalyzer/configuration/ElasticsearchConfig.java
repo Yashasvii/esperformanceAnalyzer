@@ -35,7 +35,7 @@ public class ElasticsearchConfig {
     static final AWSCredentialsProvider credentialsProvider = new DefaultAWSCredentialsProviderChain();
     private static final String serviceName = "es";
     private static final String region = "ap-south-1";
-    private static final String aesEndpoint = "https://search-estest-yn5tuxqcyommc6k37uncihkqum.ap-south-1.es.amazonaws.com";
+    private static final String aesEndpoint = "https://search-estest-qn7gye4v5ocpbu3fgdpotgxlq.ap-south-1.es.amazonaws.com";
 
     @Bean
     public RestHighLevelClient elasticsearchClient() {

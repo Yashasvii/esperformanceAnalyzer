@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
+
 /**
  * @author yashasvi
  */
@@ -40,7 +42,18 @@ public class ClusterServiceImpl implements ClusterService {
             searchRequest.source(sourceBuilder);
 
             SearchResponse searchResponse = elasticsearchClient.search(searchRequest, RequestOptions.DEFAULT);
+            log.info("Processing Index Count");
+
+            Instant initialInstant = Instant.now();
+            long initialTimeStampMillis = initialInstant.toEpochMilli();
+
             long totalCount = searchResponse.getHits().getTotalHits().value;
+
+            Instant finalInstant = Instant.now();
+            long finalTimeStampMillis = finalInstant.toEpochMilli();
+
+            log.info("Total Number of Documents in the index is : " + totalCount);
+            log.info("Total Time taken to fetch the documents is : " + (finalTimeStampMillis - initialTimeStampMillis) + " ms.");
             return new ResponseEntity<>(totalCount, HttpStatus.ACCEPTED);
         } catch (Exception e) {
             log.error(e);
@@ -52,9 +65,23 @@ public class ClusterServiceImpl implements ClusterService {
     @Override
     public ResponseEntity<Object> getClusterInfo() {
 
-        RestTemplate restTemplate = new RestTemplate();
+        try {
 
-        ResponseEntity<Object> response = restTemplate.getForEntity(clusterInfo, Object.class);
-        return new ResponseEntity<>(response.getBody(), HttpStatus.ACCEPTED);
+            RestTemplate restTemplate = new RestTemplate();
+
+            ResponseEntity<Object> response = restTemplate.getForEntity(clusterInfo, Object.class);
+
+            log.info("status code value = " + response.getStatusCodeValue());
+            log.info("status code = " + response.getStatusCode());
+
+            if (response.getStatusCodeValue() != 200) {
+                log.info("Cluster is not responding, please check cluster monitorings");
+            }
+            return new ResponseEntity<>(response.getBody(), HttpStatus.ACCEPTED);
+        } catch (Exception e) {
+            log.error(e);
+            log.info("Cluster is not responding, please check cluster monitorings");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

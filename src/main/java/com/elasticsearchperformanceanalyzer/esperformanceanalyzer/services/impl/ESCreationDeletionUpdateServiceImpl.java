@@ -136,7 +136,11 @@ public class ESCreationDeletionUpdateServiceImpl implements ESCreationDeletionUp
         final DescribeElasticsearchDomainRequest describeRequest = new DescribeElasticsearchDomainRequest()
                 .withDomainName((esCreationUpdateDeleteRequest.getDomainName() != null) ? esCreationUpdateDeleteRequest.getDomainName() : "test-domain");
 
-        DescribeElasticsearchDomainResult describeResponse = getClient() .describeElasticsearchDomain(describeRequest);
+        System.out.println("Getting Processing Status...");
+        System.out.println("Domain processing status from Amazon Elasticsearch Service:");
+
+        DescribeElasticsearchDomainResult describeResponse = getClient().describeElasticsearchDomain(describeRequest);
+        System.out.println(describeResponse.toString());
         return new ResponseEntity<>(describeResponse.toString(), HttpStatus.ACCEPTED);
     }
 

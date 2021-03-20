@@ -1,0 +1,247 @@
+{
+	"info": {
+		"_postman_id": "1ac41095-261a-43eb-9ff8-a0e2f88f30c2",
+		"name": "ES Analyzer PostMan Requests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "index-info",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"indexName\":\"email_data\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/clusterInfo/checkTestIndexCount",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"clusterInfo",
+						"checkTestIndexCount"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "cluster-info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/clusterInfo",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"clusterInfo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ESCreationRequest",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"domainName\":\"test2-es\",\n    \"esVersion\":\"7.9\",\n    \"instanceType\":\"t2.small.elasticsearch\",\n    \"instanceCount\":3\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/clusterSettings/createElasticsearchCluster",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"clusterSettings",
+						"createElasticsearchCluster"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ESUpdateRequest",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\n    \"domainName\":\"abcd\",\n    \"instanceCount\":1\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/clusterSettings/updateElasticsearchCluster",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"clusterSettings",
+						"updateElasticsearchCluster"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ESDeleteRequest",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\n    \"domainName\":\"abcd\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/clusterSettings/deleteElasticsearchCluster",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"clusterSettings",
+						"deleteElasticsearchCluster"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getProcessingStatus",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"domainName\":\"abcd\"\n }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/clusterSettings/getProcessingStatus",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"clusterSettings",
+						"getProcessingStatus"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "custom_search",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"totalTimes\":\"10\",\n  \"query\":\"{\\\"query\\\":{\\\"match_all\\\":{}}}\",\n  \"indexName\":\"sample-users-data\",\n  \"concurrencyTimes\":10\n\n }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/search/searchQuery",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"search",
+						"searchQuery"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ES Searc h Request",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"query\": {\n    \"match_all\": {}\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://search-test-es-m75tmmm4l4kln5afwu234zllvq.ap-south-1.es.amazonaws.com/sample-users-data/_search",
+					"protocol": "https",
+					"host": [
+						"search-test-es-m75tmmm4l4kln5afwu234zllvq",
+						"ap-south-1",
+						"es",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"sample-users-data",
+						"_search"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

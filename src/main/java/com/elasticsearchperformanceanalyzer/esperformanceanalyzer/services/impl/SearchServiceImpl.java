@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -29,28 +30,45 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public ResponseEntity<Object> searchQuery(ESSearchRequest esSearchRequest) {
 
+        log.info("Index Name = " + esSearchRequest.getIndexName());
+        log.info("Query = " + esSearchRequest.getQuery());
+        log.info("Total Search Count = " + esSearchRequest.getTotalTimes());
+        log.info("Number of Concurrent Threads = " + esSearchRequest.getConcurrencyTimes());
+
+
         try {
-            ExecutorService executor = Executors.newFixedThreadPool((esSearchRequest.getConcurrencyTimes() != null)? esSearchRequest.getConcurrencyTimes(): 10);
+
+            Instant initialInstant = Instant.now();
+            long initialTimeStampMillis = initialInstant.toEpochMilli();
+
+
+            ExecutorService executor = Executors.newFixedThreadPool((esSearchRequest.getConcurrencyTimes() != null) ? esSearchRequest.getConcurrencyTimes() : 10);
             Callable<ResponseEntity<String>> callable = new MyHttpCallable(clusterInfo, esSearchRequest);
 
-            for (int i = 0; i < ((esSearchRequest.getTotalTimes() != null)? esSearchRequest.getTotalTimes(): 10); i++) {
+            for (int i = 0; i < ((esSearchRequest.getTotalTimes() != null) ? esSearchRequest.getTotalTimes() : 10); i++) {
 
                 Future<ResponseEntity<String>> future = executor.submit(callable);
-                System.out.println("future = " + future.get().toString());
+                // System.out.println("future = " + future.get().toString());
             }
 
             executor.shutdown();
+
+            Instant finalInstant = Instant.now();
+            long finalTimeStampMillis = finalInstant.toEpochMilli();
+
+            log.info("Total Time taken for search : " + (finalTimeStampMillis - initialTimeStampMillis) + " ms.");
+
             return new ResponseEntity<>(HttpStatus.ACCEPTED);
+
+
+        } catch (Exception e) {
+            log.error("Exception", e);
         }
 
-        catch (Exception e) {
-            log.error("Exception",e);
-        }
+
+        return null;
 
 
-    return null;
- 
-
-   }
+    }
 
 }
